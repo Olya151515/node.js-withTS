@@ -1,3 +1,4 @@
 .idea
 node.js-withTS.iml
 node_modules
+dist

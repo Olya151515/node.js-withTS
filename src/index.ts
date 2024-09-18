@@ -1,0 +1,2 @@
+const asd = async () => {};
+asd();
