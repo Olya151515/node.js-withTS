@@ -1,50 +1,24 @@
-import { ApiErrors } from "../errors/api.errors";
 import { IUser } from "../interfases/IUser";
-import { read, write } from "../services/fs.service";
+import { User } from "../models/user.model";
 
 class UserRepository {
   public getList = async (): Promise<IUser[]> => {
-    return await read();
+    return await User.find({});
   };
   public createUser = async (dto: Partial<IUser>): Promise<IUser> => {
-    const users = await read();
-    const newUser = {
-      id: users[users.length - 1].id + 1,
-      name: dto.name,
-      email: dto.email,
-      password: dto.password,
-    };
-    users.push(newUser);
-    await write(users);
-    return newUser;
+    return await User.create(dto);
   };
-  public getUserById = async (userId: number): Promise<IUser | null> => {
-    const users = await read();
-    return users.find((user) => user.id === userId);
+  public getUserById = async (userId: string): Promise<IUser | null> => {
+    return await User.findById(userId);
   };
   public updateUserById = async (
-    userId: number,
+    userId: string,
     userBody: Partial<IUser>,
-  ): Promise<IUser[]> => {
-    const users = await read();
-    const userIndex = users.findIndex((user) => user.id === userId);
-    const { name, email, password } = userBody;
-    users[userIndex].name = name;
-    users[userIndex].email = email;
-    users[userIndex].password = password;
-
-    await write(users);
-    return users;
+  ): Promise<IUser> => {
+    return await User.findByIdAndUpdate(userId, userBody, { new: true });
   };
-  public deleteUserById = async (userId: number): Promise<IUser[]> => {
-    const users = await read();
-    const userIndex = users.findIndex((user) => user.id === userId);
-    if (userIndex === -1) {
-      throw new ApiErrors("Not found user", 404);
-    }
-    users.splice(userIndex, 1);
-    await write(users);
-    return users;
+  public deleteUserById = async (userId: string): Promise<void> => {
+    await User.deleteOne({ _id: userId });
   };
 }
 

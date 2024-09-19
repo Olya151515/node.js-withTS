@@ -1,5 +1,7 @@
 import express, { NextFunction, Request, Response } from "express";
+import * as mongoose from "mongoose";
 
+import { configs } from "./configs/configs";
 import { ApiErrors } from "./errors/api.errors";
 import { userRouter } from "./router/user.router";
 
@@ -20,6 +22,7 @@ app.use(
 process.on("uncaughtException", (error) => {
   console.error("uncaughtException", error.message, error.stack);
 });
-app.listen(5100, () => {
-  console.log("Server is running ");
+app.listen(configs.APP_Port, async () => {
+  await mongoose.connect(configs.Mongoose_url);
+  console.log(`Server is running ${configs.APP_Port}`);
 });
