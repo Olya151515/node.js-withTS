@@ -11,6 +11,11 @@ class UserRepository {
   public getUserById = async (userId: string): Promise<IUser | null> => {
     return await User.findById(userId);
   };
+
+  public getUserByEmail = async (email: string) => {
+    return await User.findOne({ email });
+  };
+
   public updateUserById = async (
     userId: string,
     userBody: Partial<IUser>,

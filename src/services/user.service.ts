@@ -7,23 +7,13 @@ class UserService {
     return await userRepository.getList();
   };
   public createUser = async (dto: Partial<IUser>): Promise<IUser> => {
-    const pattern = /^[^ ]+@[^ ]+\.[a-z]{2,3}$/;
-    if (
-      dto.name.length < 3 ||
-      dto.name.length > 10 ||
-      !dto.email.match(pattern) ||
-      dto.password.length < 10 ||
-      dto.password.length > 20
-    ) {
-      throw new ApiErrors("Not valid data", 400);
-    }
-
+    await this.isEmailExist(dto.email);
     return await userRepository.createUser(dto);
   };
   public getUserById = async (userId: string): Promise<IUser> => {
     const user = await userRepository.getUserById(userId);
     if (!user) {
-      throw new ApiErrors("Not found user", 404);
+      throw new ApiErrors("Not found user", 400);
     }
     return user;
   };
@@ -31,20 +21,17 @@ class UserService {
     userId: string,
     userBody: Partial<IUser>,
   ): Promise<IUser> => {
-    const pattern = /^[^ ]+@[^ ]+\.[a-z]{2,3}$/;
-    if (
-      userBody.name.length < 3 ||
-      userBody.name.length > 10 ||
-      !userBody.email.match(pattern) ||
-      userBody.password.length < 10 ||
-      userBody.password.length > 20
-    ) {
-      throw new ApiErrors("Not valid data", 400);
-    }
     return await userRepository.updateUserById(userId, userBody);
   };
   public deleteUserById = async (userId: string): Promise<void> => {
     await userRepository.deleteUserById(userId);
+  };
+
+  public isEmailExist = async (email: string): Promise<void> => {
+    const user = await userRepository.getUserByEmail(email);
+    if (user) {
+      throw new ApiErrors("Email exist", 409);
+    }
   };
 }
 
