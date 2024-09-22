@@ -1,6 +1,7 @@
 import { ApiErrors } from "../errors/api.errors";
 import { IUser } from "../interfases/IUser";
 import { userRepository } from "../repositories/user.repository";
+import { passwordService } from "./password.service";
 
 class UserService {
   public getList = async (): Promise<IUser[]> => {
@@ -8,7 +9,8 @@ class UserService {
   };
   public createUser = async (dto: Partial<IUser>): Promise<IUser> => {
     await this.isEmailExist(dto.email);
-    return await userRepository.createUser(dto);
+    const password = await passwordService.hashPassword(dto.password);
+    return await userRepository.createUser({ ...dto, password });
   };
   public getUserById = async (userId: string): Promise<IUser> => {
     const user = await userRepository.getUserById(userId);
