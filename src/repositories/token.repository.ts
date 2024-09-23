@@ -1,10 +1,13 @@
 import { IToken } from "../interfases/IToken";
 import { Token } from "../models/token.model";
 
-class AuthRepository {
-  public create = async (dto: Partial<IToken>): Promise<IToken> => {
+class TokenRepository {
+  public async create(dto: Partial<IToken>): Promise<IToken> {
     return await Token.create(dto);
-  };
+  }
+  public async findByParams(params: Partial<IToken>): Promise<IToken | null> {
+    return await Token.findOne(params);
+  }
 }
 
-export const authRepository = new AuthRepository();
+export const tokenRepository = new TokenRepository();

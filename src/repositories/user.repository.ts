@@ -13,7 +13,7 @@ class UserRepository {
   };
 
   public getUserByEmail = async (email: string) => {
-    return await User.findOne({ email });
+    return await User.findOne({ email }).select("+password");
   };
 
   public updateUserById = async (
