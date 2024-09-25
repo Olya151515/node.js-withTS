@@ -1,6 +1,7 @@
 import * as jsonwebtoken from "jsonwebtoken";
 
 import { configs } from "../configs/configs";
+import { TokenTypeEnum } from "../enums/token-type.enum";
 import { ApiErrors } from "../errors/api.errors";
 import { ITokenPair, ITokenPayload } from "../interfases/IToken";
 
@@ -20,12 +21,19 @@ class TokenService {
     return { accessToken, refreshToken };
   }
 
-  public verifyToken(token: string): ITokenPayload {
+  public verifyToken(token: string, type: TokenTypeEnum): ITokenPayload {
     try {
-      return jsonwebtoken.verify(
-        token,
-        configs.JWT_ACCESS_SECRET,
-      ) as ITokenPayload;
+      let secret: string;
+      switch (type) {
+        case TokenTypeEnum.ACCESS:
+          secret = configs.JWT_ACCESS_SECRET;
+          break;
+
+        case TokenTypeEnum.REFRESH:
+          secret = configs.JWT_REFRESH_SECRET;
+          break;
+      }
+      return jsonwebtoken.verify(token, secret) as ITokenPayload;
     } catch (e) {
       throw new ApiErrors(`Invalid token ${e.message}`, 401);
     }

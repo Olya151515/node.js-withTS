@@ -25,10 +25,10 @@ class UserService {
     jwtPayload: ITokenPayload,
     userBody: Partial<IUser>,
   ): Promise<IUser> => {
-    return await userRepository.updateUserById(jwtPayload.userId, userBody);
+    return await userRepository.updateMe(jwtPayload.userId, userBody);
   };
   public deleteMe = async (jwtPayload: ITokenPayload): Promise<void> => {
-    await userRepository.deleteUserById(jwtPayload.userId);
+    await userRepository.deleteMe(jwtPayload.userId);
   };
 }
 

@@ -1,5 +1,5 @@
 import { ApiErrors } from "../errors/api.errors";
-import { ITokenPair } from "../interfases/IToken";
+import { ITokenPair, ITokenPayload } from "../interfases/IToken";
 import { ISignIn, IUser } from "../interfases/IUser";
 import { tokenRepository } from "../repositories/token.repository";
 import { userRepository } from "../repositories/user.repository";
@@ -51,6 +51,20 @@ class AuthService {
     if (user) {
       throw new ApiErrors("Email exist", 409);
     }
+  };
+
+  public refresh = async (
+    refreshToken: string,
+    payload: ITokenPayload,
+  ): Promise<ITokenPair> => {
+    await tokenRepository.deleteByParams({ refreshToken });
+    const tokens = tokenService.generateTokens({
+      userId: payload.userId,
+      role: payload.role,
+    });
+
+    await tokenRepository.create({ ...tokens, _userId: payload.userId });
+    return tokens;
   };
 }
 

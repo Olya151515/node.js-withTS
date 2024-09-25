@@ -16,13 +16,13 @@ class UserRepository {
     return await User.findOne({ email }).select("+password");
   };
 
-  public updateUserById = async (
+  public updateMe = async (
     userId: string,
     userBody: Partial<IUser>,
   ): Promise<IUser> => {
     return await User.findByIdAndUpdate(userId, userBody, { new: true });
   };
-  public deleteUserById = async (userId: string): Promise<void> => {
+  public deleteMe = async (userId: string): Promise<void> => {
     await User.deleteOne({ _id: userId });
   };
 }
