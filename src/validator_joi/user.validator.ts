@@ -25,6 +25,10 @@ export class UserValidator {
     age: this.age,
     phone: this.phone,
   });
+  public static signIn = Joi.object({
+    email: this.email.required(),
+    password: this.password.required(),
+  });
 }
 
 export const userValidator = new UserValidator();

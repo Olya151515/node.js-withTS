@@ -1,8 +1,10 @@
+import { EmailTypeEnum } from "../enums/email-type.enum";
 import { ApiErrors } from "../errors/api.errors";
 import { ITokenPair, ITokenPayload } from "../interfases/IToken";
 import { ISignIn, IUser } from "../interfases/IUser";
 import { tokenRepository } from "../repositories/token.repository";
 import { userRepository } from "../repositories/user.repository";
+import { emailService } from "./email.service";
 import { passwordService } from "./password.service";
 import { tokenService } from "./token.service";
 
@@ -18,6 +20,11 @@ class AuthService {
       role: user.role,
     });
     await tokenRepository.create({ ...tokens, _userId: user._id });
+    await emailService.sendEmail(
+      "olachobanuk@gmail.com",
+      EmailTypeEnum.WELCOME,
+      { name: user.name },
+    );
     return { user, tokens };
   };
   public signIn = async (
@@ -57,7 +64,7 @@ class AuthService {
     refreshToken: string,
     payload: ITokenPayload,
   ): Promise<ITokenPair> => {
-    await tokenRepository.deleteByParams({ refreshToken });
+    await tokenRepository.deleteOneByParams({ refreshToken });
     const tokens = tokenService.generateTokens({
       userId: payload.userId,
       role: payload.role,
@@ -65,6 +72,31 @@ class AuthService {
 
     await tokenRepository.create({ ...tokens, _userId: payload.userId });
     return tokens;
+  };
+  public logout = async (
+    jwtPayload: ITokenPayload,
+    tokenId: string,
+  ): Promise<void> => {
+    const user = await userRepository.getUserById(jwtPayload.userId);
+    await tokenRepository.deleteOneByParams({ _id: tokenId });
+    await emailService.sendEmail(
+      "olachobanuk@gmail.com",
+      EmailTypeEnum.LOGOUT,
+      {
+        name: user.name,
+      },
+    );
+  };
+  public logoutAll = async (jwtPayload: ITokenPayload): Promise<void> => {
+    const user = await userRepository.getUserById(jwtPayload.userId);
+    await tokenRepository.deleteManyByParams({ _userId: jwtPayload.userId });
+    await emailService.sendEmail(
+      "olachobanuk@gmail.com",
+      EmailTypeEnum.LOGOUT,
+      {
+        name: user.name,
+      },
+    );
   };
 }
 
