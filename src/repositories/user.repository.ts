@@ -16,7 +16,7 @@ class UserRepository {
     return await User.findOne({ email }).select("+password");
   };
 
-  public updateMe = async (
+  public updateById = async (
     userId: string,
     userBody: Partial<IUser>,
   ): Promise<IUser> => {

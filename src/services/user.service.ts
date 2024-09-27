@@ -25,7 +25,7 @@ class UserService {
     jwtPayload: ITokenPayload,
     userBody: Partial<IUser>,
   ): Promise<IUser> => {
-    return await userRepository.updateMe(jwtPayload.userId, userBody);
+    return await userRepository.updateById(jwtPayload.userId, userBody);
   };
   public deleteMe = async (jwtPayload: ITokenPayload): Promise<void> => {
     await userRepository.deleteMe(jwtPayload.userId);

@@ -1,7 +1,10 @@
 import { NextFunction, Request, Response } from "express";
 
+import { ActionTokenEnum } from "../enums/action-token.type";
 import { TokenTypeEnum } from "../enums/token-type.enum";
 import { ApiErrors } from "../errors/api.errors";
+import { IResetPasswordSet } from "../interfases/IUser";
+import { actionTokenRepository } from "../repositories/action-token.repository";
 import { tokenRepository } from "../repositories/token.repository";
 import { tokenService } from "../services/token.service";
 
@@ -57,6 +60,28 @@ class AuthMiddleware {
       }
       req.res.locals.jwtPayload = payload;
       req.res.locals.refreshToken = refreshToken;
+      next();
+    } catch (e) {
+      next(e);
+    }
+  }
+  public async checkActionToken(
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ) {
+    try {
+      const { token } = req.body as IResetPasswordSet;
+      const payload = tokenService.verifyActionToken(
+        token,
+        ActionTokenEnum.FORGOT_PASSWORD,
+      );
+
+      const tokenEntity = await actionTokenRepository.getByToken(token);
+      if (!tokenEntity) {
+        throw new ApiErrors("Token is not valid", 401);
+      }
+      req.res.locals.jwtPayload = payload;
       next();
     } catch (e) {
       next(e);

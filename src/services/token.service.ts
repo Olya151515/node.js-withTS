@@ -39,6 +39,24 @@ class TokenService {
       throw new ApiErrors(`Invalid token ${e.message}`, 401);
     }
   }
+  public verifyActionToken(
+    token: string,
+    type: ActionTokenEnum,
+  ): ITokenPayload {
+    try {
+      let secret: string;
+      switch (type) {
+        case ActionTokenEnum.FORGOT_PASSWORD:
+          secret = configs.ACTION_FORGOT_PASSWORD_SECRET;
+          break;
+        default:
+          throw new ApiErrors("Invalid token", 401);
+      }
+      return jsonwebtoken.verify(token, secret) as ITokenPayload;
+    } catch (e) {
+      throw new ApiErrors(`Invalid token ${e.message}`, 401);
+    }
+  }
   public generateResetToken(
     payload: ITokenPayload,
     tokenType: ActionTokenEnum,

@@ -6,7 +6,7 @@ import { User } from "./user.model";
 
 const ActionTokenModel = new Schema(
   {
-    accessToken: { type: String, require: true },
+    token: { type: String, require: true },
     type: { type: String, require: true, enum: ActionTokenEnum },
     _userId: { type: Schema.Types.ObjectId, require: true, ref: User },
   },
