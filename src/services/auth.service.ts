@@ -1,7 +1,9 @@
+import { ActionTokenEnum } from "../enums/action-token.type";
 import { EmailTypeEnum } from "../enums/email-type.enum";
 import { ApiErrors } from "../errors/api.errors";
 import { ITokenPair, ITokenPayload } from "../interfases/IToken";
 import { ISignIn, IUser } from "../interfases/IUser";
+import { actionTokenRepository } from "../repositories/action-token.repository";
 import { tokenRepository } from "../repositories/token.repository";
 import { userRepository } from "../repositories/user.repository";
 import { emailService } from "./email.service";
@@ -98,6 +100,36 @@ class AuthService {
       },
     );
   };
+
+  public async forgotPasswordSendEmail(dto: string): Promise<void> {
+    console.log(dto);
+    const user = await userRepository.getUserByEmail(dto);
+    if (!user) {
+      throw new ApiErrors("User not found", 404);
+    }
+
+    const token = tokenService.generateResetToken(
+      { userId: user._id, role: user.role },
+      ActionTokenEnum.FORGOT_PASSWORD,
+    );
+
+    await actionTokenRepository.create({
+      token,
+      type: ActionTokenEnum.FORGOT_PASSWORD,
+      _userId: user._id,
+    });
+
+    await emailService.sendEmail(
+      "olachobanuk@gmail.com",
+      EmailTypeEnum.FORGOT_PASSWORD,
+      {
+        name: user.name,
+        email: user.email,
+        actionToken: token,
+      },
+    );
+  }
+  //public async forgotPasswordSet(dto: IResetPasswordSet): Promise<void> {}
 }
 
 export const authService = new AuthService();

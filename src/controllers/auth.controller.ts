@@ -56,6 +56,32 @@ class AuthController {
       next(e);
     }
   }
+  public async forgotPasswordSendEmail(
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ) {
+    try {
+      const dto = req.body.email as string;
+      await authService.forgotPasswordSendEmail(dto);
+      res.sendStatus(201);
+    } catch (e) {
+      next(e);
+    }
+  }
+  public async forgotPasswordSet(
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ) {
+    try {
+      //const dto = req.body.email as IResetPasswordSet;
+      //await authService.forgotPasswordSet(dto);
+      res.sendStatus(201);
+    } catch (e) {
+      next(e);
+    }
+  }
 }
 
 export const authController = new AuthController();
