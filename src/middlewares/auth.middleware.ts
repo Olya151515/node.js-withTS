@@ -3,7 +3,7 @@ import { NextFunction, Request, Response } from "express";
 import { ActionTokenEnum } from "../enums/action-token.type";
 import { TokenTypeEnum } from "../enums/token-type.enum";
 import { ApiErrors } from "../errors/api.errors";
-import { IResetPasswordSet } from "../interfases/IUser";
+import { IResetPassSet } from "../interfases/IUser";
 import { actionTokenRepository } from "../repositories/action-token.repository";
 import { tokenRepository } from "../repositories/token.repository";
 import { tokenService } from "../services/token.service";
@@ -71,8 +71,8 @@ class AuthMiddleware {
     next: NextFunction,
   ) {
     try {
-      const { token } = req.body as IResetPasswordSet;
-      const payload = tokenService.verifyActionToken(
+      const { token } = req.body as IResetPassSet;
+      const payload = tokenService.verifyToken(
         token,
         ActionTokenEnum.FORGOT_PASSWORD,
       );

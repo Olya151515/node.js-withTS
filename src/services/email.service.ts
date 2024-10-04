@@ -44,7 +44,6 @@ class EmailService {
       template,
       context,
     };
-    console.log(template);
     await this.transporter.sendMail(options);
   }
 }

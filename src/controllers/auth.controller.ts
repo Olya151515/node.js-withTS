@@ -1,7 +1,12 @@
 import { NextFunction, Request, Response } from "express";
 
 import { ITokenPayload } from "../interfases/IToken";
-import { IResetPasswordSet, ISignIn, IUser } from "../interfases/IUser";
+import {
+  IResetPassSend,
+  IResetPassSet,
+  ISignIn,
+  IUser,
+} from "../interfases/IUser";
 import { authService } from "../services/auth.service";
 
 class AuthController {
@@ -62,9 +67,9 @@ class AuthController {
     next: NextFunction,
   ) {
     try {
-      const dto = req.body.email as string;
+      const dto = req.body as IResetPassSend;
       await authService.forgotPasswordSendEmail(dto);
-      res.sendStatus(201);
+      res.sendStatus(204);
     } catch (e) {
       next(e);
     }
@@ -75,11 +80,11 @@ class AuthController {
     next: NextFunction,
   ) {
     try {
-      const dto = req.body as IResetPasswordSet;
+      const dto = req.body as IResetPassSet;
       console.log(dto);
       const jwtPayload = req.res.locals.jwtPayload as ITokenPayload;
       await authService.forgotPasswordSet(dto, jwtPayload);
-      res.sendStatus(201);
+      res.sendStatus(204);
     } catch (e) {
       next(e);
     }

@@ -2,7 +2,12 @@ import { ActionTokenEnum } from "../enums/action-token.type";
 import { EmailTypeEnum } from "../enums/email-type.enum";
 import { ApiErrors } from "../errors/api.errors";
 import { ITokenPair, ITokenPayload } from "../interfases/IToken";
-import { IResetPasswordSet, ISignIn, IUser } from "../interfases/IUser";
+import {
+  IResetPassSend,
+  IResetPassSet,
+  ISignIn,
+  IUser,
+} from "../interfases/IUser";
 import { actionTokenRepository } from "../repositories/action-token.repository";
 import { tokenRepository } from "../repositories/token.repository";
 import { userRepository } from "../repositories/user.repository";
@@ -86,18 +91,14 @@ class AuthService {
   public logoutAll = async (jwtPayload: ITokenPayload): Promise<void> => {
     const user = await userRepository.getUserById(jwtPayload.userId);
     await tokenRepository.deleteManyByParams({ _userId: jwtPayload.userId });
-    await emailService.sendEmail(
-      "olachobanuk@gmail.com",
-      EmailTypeEnum.LOGOUT,
-      {
-        name: user.name,
-      },
-    );
+    await emailService.sendEmail(user.email, EmailTypeEnum.LOGOUT, {
+      name: user.name,
+    });
   };
 
-  public async forgotPasswordSendEmail(dto: string): Promise<void> {
+  public async forgotPasswordSendEmail(dto: IResetPassSend): Promise<void> {
     console.log(dto);
-    const user = await userRepository.getUserByEmail(dto);
+    const user = await userRepository.getUserByEmail(dto.email);
     if (!user) {
       throw new ApiErrors("User not found", 404);
     }
@@ -113,14 +114,14 @@ class AuthService {
       _userId: user._id,
     });
 
-    await emailService.sendEmail(
-      "olachobanuk@gmail.com",
-      EmailTypeEnum.FORGOT_PASSWORD,
-      { name: user.name, email: user.email, actionToken: token },
-    );
+    await emailService.sendEmail(user.email, EmailTypeEnum.FORGOT_PASSWORD, {
+      name: user.name,
+      email: user.email,
+      actionToken: token,
+    });
   }
   public async forgotPasswordSet(
-    dto: IResetPasswordSet,
+    dto: IResetPassSet,
     jwtPayload: ITokenPayload,
   ): Promise<void> {
     const password = await passwordService.hashPassword(dto.password);
