@@ -39,6 +39,9 @@ class TokenService {
         case ActionTokenEnum.FORGOT_PASSWORD:
           secret = configs.ACTION_FORGOT_PASSWORD_SECRET;
           break;
+        case ActionTokenEnum.VERIFY_EMAIL:
+          secret = configs.ACTION_VERIFY_EMAIL_SECRET;
+          break;
         default:
           throw new ApiErrors("Invalid token", 401);
       }
@@ -58,6 +61,11 @@ class TokenService {
       case ActionTokenEnum.FORGOT_PASSWORD:
         secret = configs.ACTION_FORGOT_PASSWORD_SECRET;
         expiration = configs.ACTION_FORGOT_PASSWORD_EXPIRATION;
+        break;
+
+      case ActionTokenEnum.VERIFY_EMAIL:
+        secret = configs.ACTION_VERIFY_EMAIL_SECRET;
+        expiration = configs.ACTION_VERIFY_EMAIL_EXPIRATION;
         break;
       default:
         throw new ApiErrors("Invalid token", 401);

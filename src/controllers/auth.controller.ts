@@ -69,7 +69,7 @@ class AuthController {
     try {
       const dto = req.body as IResetPassSend;
       await authService.forgotPasswordSendEmail(dto);
-      res.sendStatus(204);
+      res.sendStatus(201);
     } catch (e) {
       next(e);
     }
@@ -81,10 +81,18 @@ class AuthController {
   ) {
     try {
       const dto = req.body as IResetPassSet;
-      console.log(dto);
       const jwtPayload = req.res.locals.jwtPayload as ITokenPayload;
       await authService.forgotPasswordSet(dto, jwtPayload);
-      res.sendStatus(204);
+      res.sendStatus(201);
+    } catch (e) {
+      next(e);
+    }
+  }
+  public async verify(req: Request, res: Response, next: NextFunction) {
+    try {
+      const jwtPayload = req.res.locals.jwtPayload as ITokenPayload;
+      await authService.verify(jwtPayload);
+      res.sendStatus(201);
     } catch (e) {
       next(e);
     }

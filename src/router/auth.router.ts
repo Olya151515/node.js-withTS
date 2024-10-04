@@ -1,6 +1,7 @@
 import { Router } from "express";
 
 import { authController } from "../controllers/auth.controller";
+import { ActionTokenEnum } from "../enums/action-token.type";
 import { authMiddleware } from "../middlewares/auth.middleware";
 import { commonMiddleware } from "../middlewares/common.middleware";
 import { UserValidator } from "../validator_joi/user.validator";
@@ -30,7 +31,12 @@ router.post(
 router.post("/forgot-password", authController.forgotPasswordSendEmail);
 router.put(
   "/forgot-password",
-  authMiddleware.checkActionToken,
+  authMiddleware.checkActionToken(ActionTokenEnum.FORGOT_PASSWORD),
   authController.forgotPasswordSet,
+);
+router.post(
+  "/verify",
+  authMiddleware.checkActionToken(ActionTokenEnum.VERIFY_EMAIL),
+  authController.verify,
 );
 export const authRouter = router;
