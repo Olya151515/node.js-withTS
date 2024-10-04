@@ -14,7 +14,6 @@ class AuthController {
     try {
       const dto = req.body as IUser;
       const result = await authService.signUp(dto);
-      //console.log(result);
       res.status(200).json(result);
     } catch (e) {
       next(e);

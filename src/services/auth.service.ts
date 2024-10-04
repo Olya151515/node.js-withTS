@@ -27,6 +27,7 @@ class AuthService {
       role: user.role,
     });
     await tokenRepository.create({ ...tokens, _userId: user._id });
+
     const tokenAction = tokenService.generateResetToken(
       { userId: user._id, role: user.role },
       ActionTokenEnum.VERIFY_EMAIL,
