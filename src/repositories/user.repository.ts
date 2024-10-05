@@ -9,7 +9,7 @@ class UserRepository {
     return await User.create(dto);
   };
   public getUserById = async (userId: string): Promise<IUser | null> => {
-    return await User.findById(userId);
+    return await User.findById(userId).select("+password");
   };
 
   public getUserByEmail = async (email: string): Promise<IUser | null> => {

@@ -32,6 +32,6 @@ process.on("uncaughtException", (error) => {
 });
 app.listen(configs.APP_Port, async () => {
   await mongoose.connect(configs.Mongoose_url);
-  cronRunner();
+  cronRunner(); //cron
   console.log(`Server is running ${configs.APP_Port}`);
 });

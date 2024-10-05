@@ -3,6 +3,7 @@ import { EmailTypeEnum } from "../enums/email-type.enum";
 import { ApiErrors } from "../errors/api.errors";
 import { ITokenPair, ITokenPayload } from "../interfases/IToken";
 import {
+  IChangePassword,
   IResetPassSend,
   IResetPassSet,
   ISignIn,
@@ -152,6 +153,22 @@ class AuthService {
       _userId: jwtPayload.userId,
       type: ActionTokenEnum.VERIFY_EMAIL,
     });
+  }
+  public async changePassword(
+    jwtPayload: ITokenPayload,
+    dto: IChangePassword,
+  ): Promise<void> {
+    const user = await userRepository.getUserById(jwtPayload.userId);
+    const isPasswordCorrect = await passwordService.comparePassword(
+      dto.oldPassword,
+      user.password,
+    );
+    if (!isPasswordCorrect) {
+      throw new ApiErrors("Invalid previous password", 401);
+    }
+    const password = await passwordService.hashPassword(dto.newPassword);
+    await userRepository.updateById(jwtPayload.userId, { password });
+    await tokenRepository.deleteManyByParams({ _userId: jwtPayload.userId }); //logout
   }
 }
 
