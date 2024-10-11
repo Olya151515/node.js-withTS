@@ -10,8 +10,8 @@ const handler = async () => {
       configs.JWT_REFRESH_EXPIRATION,
     );
     const date = timeHelper.subtractByParams(value, unit);
-    const deletedCount = await tokenRepository.deleteBeforeDate(date);
-    console.log("deleted count ", deletedCount);
+    await tokenRepository.deleteBeforeDate(date);
+    //console.log("deleted count ", deletedCount);
   } catch (error) {
     console.log(error);
   }

@@ -6,10 +6,10 @@ import { oldPasswordsRepository } from "../repositories/old-passwords.repository
 const handler = async () => {
   try {
     const date = timeHelper.subtractByParams(90, "days");
-    const deletedCount = await oldPasswordsRepository.deleteManyByParams({
+    await oldPasswordsRepository.deleteManyByParams({
       createdAt: { $lt: date },
     });
-    console.log("deleted count ", deletedCount);
+    //console.log("deleted count ", deletedCount);
   } catch (error) {
     console.log(error);
   }

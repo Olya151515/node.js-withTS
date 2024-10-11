@@ -1,11 +1,13 @@
 import { ApiErrors } from "../errors/api.errors";
 import { ITokenPayload } from "../interfases/IToken";
-import { IUser } from "../interfases/IUser";
+import { IListResponse, IUser, IUserQueryList } from "../interfases/IUser";
 import { userRepository } from "../repositories/user.repository";
+import { userPresenter } from "../representer/user.presenter";
 
 class UserService {
-  public getList = async (): Promise<IUser[]> => {
-    return await userRepository.getList();
+  public getList = async (query: IUserQueryList): Promise<IListResponse> => {
+    const [entities, total] = await userRepository.getList(query);
+    return userPresenter.toListResDto(entities, total, query);
   };
   public getUserById = async (userId: string): Promise<IUser> => {
     const user = await userRepository.getUserById(userId);

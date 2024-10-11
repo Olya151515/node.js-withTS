@@ -1,4 +1,5 @@
 import { Router } from "express";
+import { rateLimit } from "express-rate-limit";
 
 import { userController } from "../controllers/user.controller";
 import { authMiddleware } from "../middlewares/auth.middleware";
@@ -7,9 +8,18 @@ import { UserValidator } from "../validator_joi/user.validator";
 
 const router = Router();
 
-router.get("/", userController.getList);
+router.get(
+  "/",
+  commonMiddleware.isQueryValid(UserValidator.listQuery),
+  userController.getList,
+);
 
-router.get("/me", authMiddleware.checkAccessToken, userController.getMe);
+router.get(
+  "/me",
+  rateLimit({ windowMs: 2 * 60 * 1000, limit: 5 }),
+  authMiddleware.checkAccessToken,
+  userController.getMe,
+);
 router.put(
   "/me",
   authMiddleware.checkAccessToken,

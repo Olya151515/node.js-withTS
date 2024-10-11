@@ -1,0 +1,212 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "description": "This is a sample server Petstore server.  You can find out more about Swagger at [http://swagger.io](http://swagger.io) or on [irc.freenode.net, #swagger](http://swagger.io/irc/).  For this sample, you can use the api key `special-key` to test the authorization filters.",
+    "version": "1.0.7",
+    "title": "Swagger Petstore",
+    "termsOfService": "http://swagger.io/terms/",
+    "contact": {
+      "email": "apiteam@swagger.io"
+    },
+    "license": {
+      "name": "Apache 2.0",
+      "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+    }
+  },
+  "host": "0.0.0.0:5100",
+  "tags": [
+    {
+      "name": "user",
+      "description": "Operations about user"
+    },
+    {
+      "name": "auth",
+      "description": "Operations about auth"
+    }
+  ],
+  "schemes": [
+    "http"
+  ],
+  "paths": {
+    "/user/me": {
+      "get": {
+        "tags": ["user"],
+        "summary": "get me",
+        "operationId": "getMyUser",
+        "security": [{"BearerAuth": []}],
+        "responses": {
+          "200":{
+            "description": "Successful operation",
+            "schema": {
+              "$ref": "#/definitions/PrivateUserResponse"
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Not found"
+          }
+        }
+      },
+      "put": {
+        "tags": ["user"],
+        "summary": "update me",
+        "operationId": "updateMyUser",
+        "security": [{"BearerAuth": []}],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/UpdateUserDTO"
+            }
+          }
+        ],
+        "responses": {
+          "200":{
+            "description": "Successful operation",
+            "schema": {
+              "$ref": "#/definitions/PrivateUserResponse"
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Not found"
+          }
+        }
+      },
+      "delete": {
+        "tags": ["user"],
+        "summary": "delete me",
+        "operationId": "deleteMyUser",
+        "security": [{"BearerAuth": []}],
+        "responses": {
+          "200":{
+            "description": "Successful operation",
+            "schema": {
+              "$ref": "#/definitions/PrivateUserResponse"
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Not found"
+          }
+        }
+      }
+    },
+    "/user": {
+      "post": {
+        "tags": ["user"],
+        "summary": "create me",
+        "operationId": "createMyUser",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Created user object",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/PrivateUserResponse"
+            }
+          }
+        ],
+        "responses": {
+          "default":{
+            "description": "Successful operation"
+          }
+        }
+      }
+    },
+    "/auth/sign-up": {
+      "post": {
+        "tags": ["auth"],
+        "summary": "sign in",
+        "operationId": "sign-in",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Created user object",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/PrivateUserResponse"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Successful operation"
+          }
+        }
+      }
+    }
+  },
+  "securityDefinitions": {
+    "BearerAuth": {
+      "type": "apiKey",
+      "in": "header",
+      "name": "Authorization"
+    }
+  },
+  "definitions": {
+    "UpdateUserDTO": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Updated name in the system"
+        },
+        "age": {
+          "type": "string",
+          "description": "Updated age in the system"
+        },
+        "phone": {
+          "type": "string",
+          "description": "Updated phone number in the system"
+        }
+      }
+    },
+    "PrivateUserResponse": {
+      "type": "object",
+      "required": ["id","name","email"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "uuid",
+          "description": "The unique identifier for user  "
+        },
+        "name": {
+          "type": "string"
+        },
+        "age": {
+          "type": "number"
+        },
+        "phone": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "role": {
+          "type": "string",
+          "enum": ["user","admin"]
+        },
+        "isDeleted": {
+          "type": "boolean"
+        },
+        "isVerified": {
+          "type": "boolean"
+        },
+        "avatar": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}
