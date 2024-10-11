@@ -16,7 +16,7 @@ const handler = async () => {
         });
       }),
     ]);
-    console.log("count", users.length);
+    //console.log("count", users.length);
   } catch (error) {
     console.log(error);
   }
