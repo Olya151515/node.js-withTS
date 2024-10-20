@@ -1,7 +1,11 @@
+import { UploadedFile } from "express-fileupload";
+
+import { FileItemTypeEnum } from "../enums/file.item-type";
 import { ApiErrors } from "../errors/api.errors";
 import { ITokenPayload } from "../interfases/IToken";
 import { IUser } from "../interfases/IUser";
 import { userRepository } from "../repositories/user.repository";
+import { s3Service } from "./s3.service";
 
 class UserService {
   public getList = async (): Promise<IUser[]> => {
@@ -29,6 +33,32 @@ class UserService {
   };
   public deleteMe = async (jwtPayload: ITokenPayload): Promise<void> => {
     await userRepository.deleteMe(jwtPayload.userId);
+  };
+  public uploadAvatar = async (
+    jwtPayload: ITokenPayload,
+    fileAvatar: UploadedFile,
+  ): Promise<IUser> => {
+    const user = await userRepository.getUserById(jwtPayload.userId);
+    const avatar = await s3Service.uploadFile(
+      fileAvatar,
+      FileItemTypeEnum.USER,
+      user._id,
+    );
+    const updatedUser = await userRepository.updateById(jwtPayload.userId, {
+      avatar,
+    });
+    if (user.avatar) {
+      await s3Service.deleteFile(user.avatar);
+    }
+    return updatedUser;
+  };
+  public deleteAvatar = async (jwtPayload: ITokenPayload): Promise<IUser> => {
+    const user = await userRepository.getUserById(jwtPayload.userId);
+
+    if (user.avatar) {
+      await s3Service.deleteFile(user.avatar);
+    }
+    return await userRepository.updateById(user._id, { avatar: null });
   };
 }
 

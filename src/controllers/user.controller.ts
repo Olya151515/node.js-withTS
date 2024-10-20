@@ -1,7 +1,9 @@
 import { NextFunction, Request, Response } from "express";
+import { UploadedFile } from "express-fileupload";
 
 import { ITokenPayload } from "../interfases/IToken";
 import { IUser } from "../interfases/IUser";
+import { userPresenter } from "../presenters/user.presenter";
 import { userService } from "../services/user.service";
 
 class UserController {
@@ -54,5 +56,27 @@ class UserController {
       next(e);
     }
   };
+
+  public async uploadAvatar(req: Request, res: Response, next: NextFunction) {
+    try {
+      const jwtPayload = req.res.locals.jwtPayload as ITokenPayload;
+      const avatar = req.files.avatar as UploadedFile;
+      const result = await userService.uploadAvatar(jwtPayload, avatar);
+      const userRepresent = userPresenter.toPublicResDto(result);
+      res.status(201).json(userRepresent);
+    } catch (e) {
+      next(e);
+    }
+  }
+  public async deleteAvatar(req: Request, res: Response, next: NextFunction) {
+    try {
+      const jwtPayload = req.res.locals.jwtPayload as ITokenPayload;
+      const result = await userService.deleteAvatar(jwtPayload);
+      const userRepresent = userPresenter.toPublicResDto(result);
+      res.status(201).json(userRepresent);
+    } catch (e) {
+      next(e);
+    }
+  }
 }
 export const userController = new UserController();
